@@ -1,0 +1,130 @@
+diff -upr lis-2.0.6.orig/configure lis-2.0.6.K/configure
+--- lis-2.0.6.orig/configure	2018-01-31 20:37:32.000000000 +0900
++++ lis-2.0.6.K/configure	2018-02-08 16:19:38.000000000 +0900
+@@ -3755,6 +3755,42 @@ if test "$TARGET" != ""; then
+                     MPINP="-n"
+                     OMPFLAG="-Kopenmp"
+           ;;
++# Fujitsu Compiler for K
++          K_shared) CC="fcc"
++                    F77="frt"
++                    FC="frt"
++                    MPICC="mpifcc"
++                    MPIF77="mpifrt"
++                    MPIFC="mpifrt"
++                    CFLAGS="-Kfast,ocl,preex,noeval -w"
++                    FFLAGS="-Kfast,ocl,preex,noeval -Cpp -fs -KPIC"
++                    FCFLAGS="-Kfast,ocl,preex,noeval -Cpp -fs -KPIC"
++                    FCLDFLAGS=""
++                    ac_cv_sizeof_void_p=8
++                    ax_f77_mangling="lower case, underscore, no extra underscore"
++                    ax_cv_c_compiler_vendor="fujitsu"
++                    ax_cv_f77_compiler_vendor="fujitsu"
++                    OMPFLAG="-Kopenmp"
++          ;;
++# Fujitsu Compiler for K
++          K_mpi_shared) CC="fcc"
++                    F77="mpifrt"
++                    FC="mpifrt"
++                    MPICC="mpifcc"
++                    MPIF77="mpifrt"
++                    MPIFC="mpifrt"
++                    CFLAGS="-Kfast,ocl,preex,noeval -w"
++                    FFLAGS="-Kfast,ocl,preex,noeval -Cpp -fs -KPIC"
++                    FCFLAGS="-Kfast,ocl,preex,noeval -Cpp -fs -KPIC"
++                    FCLDFLAGS=""
++                    ac_cv_sizeof_void_p=8
++                    ax_f77_mangling="lower case, underscore, no extra underscore"
++                    ax_cv_c_compiler_vendor="fujitsu"
++                    ax_cv_f77_compiler_vendor="fujitsu"
++                    MPIRUN="mpiexec"
++                    MPINP="-n"
++                    OMPFLAG="-Kopenmp"
++          ;;
+ # Hitachi Optimizing Compiler for SR16000
+           hitachi_sr16k) CC="cc"
+                     F77="f90"
+@@ -11828,6 +11864,16 @@ $as_echo_n "checking for $compiler optio
+     esac
+   fi
+ 
++if test "$ax_cv_c_compiler_vendor" = "fujitsu"; then
++   case $host_cpu in
++      sparc64*)
++        lt_prog_compiler_pic='-KPIC'
++        ;;
++      *)
++        ;;
++   esac
++fi
++
+ case $host_os in
+   # For platforms which do not support PIC, -DPIC is meaningless:
+   *djgpp*)
+diff -upr lis-2.0.6.orig/configure.ac lis-2.0.6.K/configure.ac
+--- lis-2.0.6.orig/configure.ac	2018-01-31 20:37:32.000000000 +0900
++++ lis-2.0.6.K/configure.ac	2018-02-08 16:25:21.000000000 +0900
+@@ -151,6 +151,42 @@ if test "$TARGET" != ""; then
+                     MPINP="-n"
+                     OMPFLAG="-Kopenmp"
+           ;;
++# Fujitsu Compiler for K 
++          K_shared) CC="fcc"
++                    F77="frt"
++                    FC="frt"
++                    MPICC="mpifcc"
++                    MPIF77="mpifrt"
++                    MPIFC="mpifrt"
++                    CFLAGS="-Kfast,ocl,preex,noeval -w"
++                    FFLAGS="-Kfast,ocl,preex,noeval -Cpp -fs -KPIC"
++                    FCFLAGS="-Kfast,ocl,preex,noeval -Cpp -fs -KPIC"
++                    FCLDFLAGS=""
++                    ac_cv_sizeof_void_p=8
++                    ax_f77_mangling="lower case, underscore, no extra underscore"
++                    ax_cv_c_compiler_vendor="fujitsu"
++                    ax_cv_f77_compiler_vendor="fujitsu"
++                    OMPFLAG="-Kopenmp"
++          ;;
++# Fujitsu Compiler for K 
++          K_mpi_shared) CC="fcc"
++                    F77="mpifrt"
++                    FC="mpifrt"
++                    MPICC="mpifcc"
++                    MPIF77="mpifrt"
++                    MPIFC="mpifrt"
++                    CFLAGS="-Kfast,ocl,preex,noeval -w"
++                    FFLAGS="-Kfast,ocl,preex,noeval -Cpp -fs -KPIC"
++                    FCFLAGS="-Kfast,ocl,preex,noeval -Cpp -fs -KPIC"
++                    FCLDFLAGS=""
++                    ac_cv_sizeof_void_p=8
++                    ax_f77_mangling="lower case, underscore, no extra underscore"
++                    ax_cv_c_compiler_vendor="fujitsu"
++                    ax_cv_f77_compiler_vendor="fujitsu"
++                    MPIRUN="mpiexec"
++                    MPINP="-n"
++                    OMPFLAG="-Kopenmp"
++          ;;
+ # Hitachi Optimizing Compiler for SR16000
+           hitachi_sr16k) CC="cc"
+                     F77="f90"
+diff -upr lis-2.0.6.orig/m4/libtool.m4 lis-2.0.6.K/m4/libtool.m4
+--- lis-2.0.6.orig/m4/libtool.m4	2018-01-31 20:37:32.000000000 +0900
++++ lis-2.0.6.K/m4/libtool.m4	2018-01-31 18:49:17.000000000 +0900
+@@ -4108,6 +4108,17 @@ m4_if([$1], [CXX], [
+     esac
+   fi
+ ])
++
++if test "$ax_cv_c_compiler_vendor" = "fujitsu"; then
++   case $host_cpu in
++      sparc64*)
++        _LT_TAGVAR(lt_prog_compiler_pic, $1)='-KPIC'
++        ;;
++      *)
++        ;;
++   esac
++fi
++
+ case $host_os in
+   # For platforms which do not support PIC, -DPIC is meaningless:
+   *djgpp*)
